@@ -39,6 +39,18 @@ Generate a backtrace
 D::backtrace();
 ```
 
+List included files
+
+```php
+D::includes();
+```
+
+View ini settings
+
+```php
+D::ini();
+```
+
 Grant or revoke debugging privileges (This will override all other checks. Use with caution!)
 
 ```php
