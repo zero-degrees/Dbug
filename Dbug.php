@@ -253,7 +253,7 @@ class D {
                     $formattedParam = ($variadic ? '...' : '') . $reference . self::_style($paramName, 'parameterName') . $value;
                     $formattedParams[] = $formattedParam;
                 }
-                echo str_repeat("\t", $depth), self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), 'function ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')', "\n";
+                echo str_repeat("\t", $depth), self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style('function', 'function'), ' ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')', "\n";
 
                 foreach($ancestors as $ancestor) {
                     if($ancestor->hasMethod($name)) {
@@ -363,6 +363,7 @@ class D {
 			'static'		=> array("\033[1;31m", 'color: firebrick; font-weight: bold;'),
 			'controlChar'	=> array("\033[1;31m", 'color: red;'),
 			'visibility'	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
+			'function'   	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'type'   		=> array("\033[1;32m", 'color: green; font-weight: bold;')
 		);
         $style = isset($styles[$name]) ? $styles[$name] : $styles['default'];
