@@ -217,7 +217,7 @@ class D {
 		if($implements) {
             echo "\nImplements:\n";
             foreach($implements as $implement) {
-			    echo $implement, "\n";
+			    echo str_repeat("\t", $depth), self::_style($implement, 'implement'), "\n";
             }
 		}
 
@@ -448,6 +448,7 @@ class D {
     protected static function _getStyle($name) {
 		$styles = array(
 			'default'		=> array("\033[0;39m", ''),
+			'implement'  	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
 			'className'		=> array("\033[0;36m", 'color: darkcyan; font-weight: bold;'),
 			'methodName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
 			'constantName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
