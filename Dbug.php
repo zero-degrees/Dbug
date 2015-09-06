@@ -31,6 +31,14 @@
 class D {
     const STYLE = 'background-color: white; color: black; font-size: initial; font-weight: initial; font-style: initial; text-decoration: none; text-align: left; font-family: monospace; text-transform: none; padding: 14px;';
 
+    /**
+     * Display debugging info about any kind of variable.
+     *
+     * @param mixed $var The variable to debug
+     * @param bool $exit
+     * @param int $maxDepth Limits recursion. Set to -1 to disable resursion protection.
+     * @param int $depth The current depth
+     */
     public static function bug($var, $exit = true, $maxDepth = 1, $depth = 0) {
         if(!self::isAuthorized()) {
             return;
@@ -82,6 +90,12 @@ class D {
         }
     }
 
+    /**
+     * Output a string's ASCII values, and highlight control characters.
+     *
+     * @param string $var
+     * @param bool $exit
+     */
     public static function bugString($var, $exit = true) {
         if(!self::isAuthorized()) {
             return;
@@ -106,6 +120,11 @@ class D {
         self::_footer($exit);
     }
 
+    /**
+     * Generate a backtrace.
+     *
+     * @param bool $exit
+     */
     public function backtrace($exit = true) {
         if(!self::isAuthorized()) {
             return;
@@ -116,6 +135,11 @@ class D {
         self::_footer($exit);
     }
 
+    /**
+     * Display a list of currently included files.
+     *
+     * @param bool $exit
+     */
     public function includes($exit = true) {
         if(!self::isAuthorized()) {
             return;
@@ -126,6 +150,11 @@ class D {
         self::_footer($exit);
     }
 
+    /**
+     * Display the ini settings.
+     *
+     * @param bool $exit
+     */
     public function ini($exit = true) {
         if(!self::isAuthorized()) {
             return;
@@ -134,6 +163,9 @@ class D {
         self::bug(ini_get_all(), $exit, -1);
     }
 
+    /**
+     * Check if the client is eligible for debugging.
+     */
     public static function isAuthorized() {
         $authorized = self::_get('authorized');
         if($authorized !== null) {
@@ -149,14 +181,27 @@ class D {
         return preg_match('/^(192\.168\.|172\.16\.|10\.|127\.0\.0\.1$)/S', $ip);
     }
 
+    /**
+     * Grant debugging privelege to the client.
+     */
     public static function authorize() {
         self::_set('authorized', true);
     }
 
+    /**
+     * Revoke the client's debugging privelege.
+     */
     public static function deauthorize() {
         self::_set('authorized', false);
     }
 
+    /**
+     * Write detailed debugging info about an object.
+     *
+     * @param object $var The variable to debug
+     * @param int $maxDepth Limits recursion. Set to -1 to disable resursion protection.
+     * @param int $depth The current depth
+     */
     protected static function _bugObject($var, $maxDepth, $depth) {
         $mode = self::_mode();
         $class = get_class($var);
@@ -274,6 +319,13 @@ class D {
         }
     }
 
+    /**
+     * Build a formatted declaration string for the supplied class or method.
+     *
+     * @param ReflectionClass|ReflectionMethod $reflection
+     *
+     * @return string
+     */
     protected static function _bugDeclaration($reflection) {
         $name = get_class($reflection) == 'ReflectionMethod' ? $reflection->class : $reflection->getName();
         $file = $reflection->getFileName();
@@ -286,6 +338,13 @@ class D {
         }
     }
 
+    /**
+     * Get a list of ancestors for a given class or object.
+     *
+     * @param RefectionClass|ReflectionObject $reflection
+     *
+     * @return array
+     */
     protected static function _getAncestors($reflection) {
         if(get_class($reflection) == 'ReflectionObject') {
             $reflection = new ReflectionClass($reflection->getName());
@@ -303,6 +362,13 @@ class D {
         return $ancestors;
     }
 
+    /**
+     * Get a property or method's visibility.
+     *
+     * @param ReflectionProperty|ReflectionMethod $var
+     *
+     * @return string
+     */
     protected static function _getVisibility($var) {
         if($var->isPrivate()) {
             return 'private';
@@ -319,6 +385,9 @@ class D {
         return php_sapi_name() == 'cli' ? 'cli' : 'web';
     }
 
+    /**
+     * Start the output buffer, and write the header.
+     */
     protected static function _header() {
         ob_start();
         echo "\n";
@@ -330,6 +399,11 @@ class D {
         }
     }
 
+    /**
+     * Write the footer, flush the output buffer, and exit if requested.
+     *
+     * @param bool $exit
+     */
     protected static function _footer($exit) {
         echo "\n";
         if(self::_mode() == 'web') {
@@ -346,6 +420,14 @@ class D {
         }
     }
 
+    /**
+     * Style the supplied string.
+     *
+     * @param string $string The string to style
+     * @param string $name The name of the style
+     *
+     * @return string
+     */
     protected static function _style($string, $name) {
         $style = self::_getStyle($name);
         if(self::_mode() == 'web') {
@@ -356,6 +438,13 @@ class D {
         }
     }
 
+    /**
+     * Look up a style.
+     *
+     * @param string $name The name of the style
+     *
+     * @return string
+     */
     protected static function _getStyle($name) {
 		$styles = array(
 			'default'		=> array("\033[0;39m", ''),
@@ -375,12 +464,25 @@ class D {
         return self::_mode() == 'web' ? $style[1] : $style[0];
     }
 
+    /**
+     * Get a value from the registry.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected static function _get($key) {
         global $_Dbug;
 
         return isset($_Dbug[$key]) ? $_Dbug[$key] : null;
     }
 
+    /**
+     * Store a value in the registry.
+     *
+     * @param string $key
+     * @param mixed $value
+     */
     protected static function _set($key, $value) {
         global $_Dbug;
 
