@@ -206,7 +206,9 @@ class D {
                     $property->setAccessible(false);
                 }
 
-                echo str_repeat("\t", $depth), self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style($name, 'propertyName'), ' = ', $info, "\n";
+                echo str_repeat("\t", $depth),
+                    self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style($name, 'propertyName'), ' = ', $info,
+                    "\n";
             }
         }
 
@@ -253,7 +255,9 @@ class D {
                     $formattedParam = ($variadic ? '...' : '') . $reference . self::_style($paramName, 'parameterName') . $value;
                     $formattedParams[] = $formattedParam;
                 }
-                echo str_repeat("\t", $depth), self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style('function', 'function'), ' ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')', "\n";
+                echo str_repeat("\t", $depth),
+                    self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style('function', 'function'), ' ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')',
+                    "\n";
 
                 foreach($ancestors as $ancestor) {
                     if($ancestor->hasMethod($name)) {
