@@ -178,7 +178,7 @@ class D {
 
 		$headers = function_exists('apache_request_headers') ? apache_request_headers() : array();
 		$ip = isset($headers['X-Forwarded-For']) ? $headers['X-Forwarded-For'] : $_SERVER['REMOTE_ADDR'];
-        return preg_match('/^(192\.168\.|172\.16\.|10\.|127\.0\.0\.1$)/S', $ip);
+        return preg_match('/^(192\.168\.|172\.16\.|10\.|127\.0\.0\.1$|0:0:0:0:0:0:0:1$|::1$)/S', $ip);
     }
 
     /**
