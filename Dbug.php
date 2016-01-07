@@ -413,6 +413,8 @@ class D {
 		else {
 			echo self::_getStyle('default');
 		}
+
+		echo 'Dbug called from ' . self::_style(self::_getCaller(), 'caller'), "\n\n";
 	}
 
 	/**
@@ -494,11 +496,28 @@ class D {
 			'visibility'	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'function'		=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'type'			=> array("\033[1;32m", 'color: green; font-weight: bold;'),
-			'namespace'		=> array("\033[0;36m", 'color: darkcyan;')
+			'namespace'		=> array("\033[0;36m", 'color: darkcyan;'),
+			'caller'		=> array("\033[1;39m", 'font-weight: bold;')
 		);
 		$style = isset($styles[$name]) ? $styles[$name] : $styles['default'];
 
 		return self::_mode() == 'web' ? $style[1] : $style[0];
+	}
+
+	/**
+	 * Determine the file and line of Dbug's caller.
+	 *
+	 * @return string
+	 */
+	protected static function _getCaller() {
+		$trace = debug_backtrace();
+		foreach($trace as $step) {
+			if($step['function'][0] != '_') {
+				break;
+			}
+		}
+
+		return $step['file'] . ':' . $step['line'];
 	}
 
 	/**
