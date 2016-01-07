@@ -393,7 +393,7 @@ class D {
 
 		return array(
 			'name'		=> array_pop($pieces),
-			'namespace'	=> implode('\\', $pieces) . '\\'
+			'namespace'	=> sizeof($pieces) ? implode('\\', $pieces) . '\\' : ''
 		);
 	}
 
