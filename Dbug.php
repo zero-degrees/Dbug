@@ -29,7 +29,7 @@
  */
 
 class D {
-	const STYLE = 'background-color: white; color: black; font-size: initial; font-weight: initial; font-style: initial; text-decoration: none; text-align: left; font-family: monospace; text-transform: none; padding: 14px;';
+	const STYLE = 'background-color: white; color: black; font-size: initial; font-weight: initial; font-style: initial; text-decoration: none; text-align: left; font-family: monospace; text-transform: none; padding: 14px; border: solid 1px #888;';
 
 	/**
 	 * Display debugging info about any kind of variable.
