@@ -9,7 +9,7 @@
 
 # Usage
 
-To get started, include the library in your project. The first file that is loaded is usually a good choice.
+To get started, include the library in your project. Putting it at the top of the first file that is loaded is usually a good choice.
 
 ```php
 include('Dbug.php');
