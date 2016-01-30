@@ -123,15 +123,17 @@ class D {
 	/**
 	 * Generate a backtrace.
 	 *
+	 * @param bool $showArgs Show function/method arguments
 	 * @param bool $exit
 	 */
-	public function backtrace($exit = true) {
+	public function backtrace($exit = true, $showArgs = false) {
 		if(!self::isAuthorized()) {
 			return;
 		}
 
 		self::_header();
-		debug_print_backtrace();
+		$options = $showArgs ? DEBUG_BACKTRACE_IGNORE_ARGS : 0;
+		debug_print_backtrace($options);
 		self::_footer($exit);
 	}
 
