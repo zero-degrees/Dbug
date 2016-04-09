@@ -33,6 +33,16 @@ namespace Test;
 chdir(__DIR__);
 include('../Dbug.php');
 
+trait TraitA {
+	public function traitMethodA() {}
+}
+
+trait TraitB {
+	public function traitMethodA() {}
+	public function traitMethodB() {}
+	private function privateFunction() {}
+}
+
 class TestA extends \stdClass {
 	const BLAH = 'dsfgdfg';
 
@@ -53,6 +63,8 @@ class TestA extends \stdClass {
 }
 
 class TestB extends TestA {
+	use TraitA;
+
 	const BLAH = 'dsfg&dfg';
 
 	private $privateProp = 124;
@@ -69,6 +81,8 @@ class TestB extends TestA {
 }
 
 class TestC extends TestB implements \Iterator {
+	use TraitB;
+
 	public function current() {}
 	public function key() {}
 	public function next() {}

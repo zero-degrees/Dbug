@@ -126,7 +126,7 @@ class D {
 	 * @param bool $showArgs Show function/method arguments
 	 * @param bool $exit
 	 */
-	public function backtrace($exit = true, $showArgs = false) {
+	public static function backtrace($exit = true, $showArgs = false) {
 		if(!self::isAuthorized()) {
 			return;
 		}
@@ -142,7 +142,7 @@ class D {
 	 *
 	 * @param bool $exit
 	 */
-	public function includes($exit = true) {
+	public static function includes($exit = true) {
 		if(!self::isAuthorized()) {
 			return;
 		}
@@ -157,7 +157,7 @@ class D {
 	 *
 	 * @param bool $exit
 	 */
-	public function ini($exit = true) {
+	public static function ini($exit = true) {
 		if(!self::isAuthorized()) {
 			return;
 		}
@@ -209,9 +209,14 @@ class D {
 		$class = get_class($var);
 		$object = new ReflectionObject($var);
 
-		$ancestors = self::_getAncestors($object);
-		foreach($ancestors as $ancestor) {
+		$directAncestors = self::_getDirectAncestors($object);
+		foreach($directAncestors as $ancestor) {
 			echo "\n", str_repeat("\t", $depth), self::_bugDeclaration($ancestor);
+
+			$traits = self::_getTraits($ancestor);
+			foreach($traits as $trait) {
+				echo "\n", str_repeat("\t", $depth), self::_style('Trait', 'trait'), ' ', self::_bugDeclaration($trait);
+			}
 		}
 		echo "\n";
 
@@ -306,7 +311,7 @@ class D {
 					self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style('function', 'function'), ' ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')',
 					"\n";
 
-				foreach($ancestors as $ancestor) {
+				foreach($directAncestors as $ancestor) {
 					if($ancestor->hasMethod($name)) {
 						$ancestorMethod = $ancestor->getMethod($name);
 						if($ancestorMethod->class == $ancestor->getName()) {
@@ -347,21 +352,33 @@ class D {
 	 *
 	 * @return array
 	 */
-	protected static function _getAncestors($reflection) {
+	protected static function _getDirectAncestors($reflection) {
 		if(get_class($reflection) == 'ReflectionObject') {
 			$reflection = new ReflectionClass($reflection->getName());
 		}
 		$class = $reflection->name;
-		$ancestors = array($reflection);
+		$directAncestors = array($reflection);
 		$ancestor = $reflection;
 		while($ancestor) {
 			$ancestor = $ancestor->getParentClass();
 			if($ancestor) {
-				$ancestors[] = $ancestor;
+				$directAncestors[] = $ancestor;
 			}
 		}
 
-		return $ancestors;
+		return $directAncestors;
+	}
+
+
+	/**
+	 * Get the traits (if supported) the supplied class or method.
+	 *
+	 * @param ReflectionClass|ReflectionMethod $reflection
+	 *
+	 * @return array
+	 */
+	protected static function _getTraits($reflection) {
+		return method_exists($reflection, 'getTraits') ? $reflection->getTraits() : array();
 	}
 
 	/**
@@ -499,7 +516,8 @@ class D {
 			'function'		=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'type'			=> array("\033[1;32m", 'color: green; font-weight: bold;'),
 			'namespace'		=> array("\033[0;36m", 'color: darkcyan;'),
-			'caller'		=> array("\033[1;39m", 'font-weight: bold;')
+			'caller'		=> array("\033[1;39m", 'font-weight: bold;'),
+			'trait'			=> array("\033[1;34m", 'color: blue; font-weight: bold;')
 		);
 		$style = isset($styles[$name]) ? $styles[$name] : $styles['default'];
 
