@@ -35,15 +35,27 @@ include('../Dbug.php');
 
 trait TraitA {
 	public function traitMethodA() {}
+
+	public static function publicStaticMethod() {
+		return 'TraitA';
+	}
 }
 
 trait TraitB {
 	public function traitMethodA() {}
 	public function traitMethodB() {}
-	private function privateFunction() {}
+	private function privateMethod() {}
+}
+
+trait TraitC {
+	public static function publicStaticMethod() {
+		return 'TraitA';
+	}
 }
 
 class TestA extends \stdClass {
+	use TraitC;
+
 	const BLAH = 'dsfgdfg';
 
 	private $privateProp = 124;
@@ -53,11 +65,7 @@ class TestA extends \stdClass {
 	);
 	public static $publicStaticProp = true;
 
-	private function privateFunction() {
-		return true;
-	}
-
-	public static function publicStaticFunction() {
+	private function privateMethod() {
 		return true;
 	}
 }
@@ -75,12 +83,17 @@ class TestB extends TestA {
 	public static $publicStaticProp = true;
 	public $test = 'asdgb<';
 
-	private function privateFunction(&$a, $b = 1, $c = '1 + 1 = 2', $d = "test'd") {
+	private function privateMethod(&$a, $b = 1, $c = '1 + 1 = 2', $d = "test'd") {
 		return true;
+	}
+
+	public static function publicStaticMethod() {
+		return 'TestB';
 	}
 }
 
 class TestC extends TestB implements \Iterator {
+	use TraitC;
 	use TraitB;
 
 	public function current() {}
@@ -89,7 +102,7 @@ class TestC extends TestB implements \Iterator {
 	public function rewind() {}
 	public function valid() {}
 
-	public static function publicStaticFunction() {
+	public static function publicStaticMethod() {
 		\D::backtrace(false);
 	}
 }
@@ -102,11 +115,14 @@ $test = array(
 	'd'	=> true,
 	'e'	=> $fileTest,
 	'f'	=> null,
-	'g'	=> new \D()
+	'g'	=> new \D(),
+	'h'	=> TestA::publicStaticMethod(),
+	'i'	=> TestB::publicStaticMethod()
 );
 \D::bug($test, false);
 \D::bug($test['a'], false);
+\D::bug(new TestA(), false, -1);
 \D::bug(new TestC(), false, -1);
 fclose($fileTest);
-TestC::publicStaticFunction();
+TestC::publicStaticMethod();
 \D::bugString('control' . chr(8) . ' character');

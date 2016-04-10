@@ -209,14 +209,9 @@ class D {
 		$class = get_class($var);
 		$object = new ReflectionObject($var);
 
-		$directAncestors = self::_getDirectAncestors($object);
-		foreach($directAncestors as $ancestor) {
-			echo "\n", str_repeat("\t", $depth), self::_bugDeclaration($ancestor);
-
-			$traits = self::_getTraits($ancestor);
-			foreach($traits as $trait) {
-				echo "\n", str_repeat("\t", $depth), self::_style('Trait', 'trait'), ' ', self::_bugDeclaration($trait);
-			}
+		$ancestors = self::_getAncestors($object);
+		foreach($ancestors as $ancestor) {
+			echo "\n", str_repeat("\t", $depth), self::_bugDeclaration($ancestor['reflection']);
 		}
 		echo "\n";
 
@@ -311,10 +306,11 @@ class D {
 					self::_style($visibility, 'visibility'), ' ', self::_style($static, 'static'), self::_style('function', 'function'), ' ', self::_style($name, 'methodName'), '(', implode(', ', $formattedParams), ')',
 					"\n";
 
-				foreach($directAncestors as $ancestor) {
-					if($ancestor->hasMethod($name)) {
-						$ancestorMethod = $ancestor->getMethod($name);
-						if($ancestorMethod->class == $ancestor->getName()) {
+				foreach($ancestors as $ancestor) {
+					$reflection = $ancestor['reflection'];
+					if($reflection->hasMethod($name)) {
+						$ancestorMethod = $reflection->getMethod($name);
+						if($ancestorMethod->class == $reflection->getName()) {
 							echo str_repeat("\t", $depth + 1), self::_bugDeclaration($ancestorMethod), "\n";
 						}
 					}
@@ -334,11 +330,24 @@ class D {
 	 * @return string
 	 */
 	protected static function _bugDeclaration($reflection) {
-		$name = get_class($reflection) == 'ReflectionMethod' ? $reflection->class : $reflection->getName();
+		$isMethod = get_class($reflection) == 'ReflectionMethod';
+		$name = $isMethod ? $reflection->class : $reflection->getName();
 		$file = $reflection->getFileName();
 		$line = $reflection->getStartLine();
 		if($file !== false) {
-			return $file . ':' . $line . ' (' . self::_styleClassName($name) . ')';
+			ob_start();
+			$isTrait = (method_exists($reflection, 'isTrait') && $reflection->isTrait()) || 
+					($isMethod && method_exists($reflection->getDeclaringClass(), 'isTrait') && $reflection->getDeclaringClass()->isTrait());
+			if($isTrait) {
+				echo "\t";
+			}
+			echo $file, ':', $line, ' (';
+			if($isTrait) {
+				echo self::_style('Trait', 'trait'), ' ';
+			}
+			echo self::_styleClassName($name) . ')';
+
+			return ob_get_clean();
 		}
 		else {
 			return 'Built-in (' . self::_style($name, 'className') . ')';
@@ -352,21 +361,42 @@ class D {
 	 *
 	 * @return array
 	 */
-	protected static function _getDirectAncestors($reflection) {
+	protected static function _getAncestors($reflection) {
 		if(get_class($reflection) == 'ReflectionObject') {
 			$reflection = new ReflectionClass($reflection->getName());
 		}
 		$class = $reflection->name;
-		$directAncestors = array($reflection);
+		$ancestors[] = array(
+				'isTrait'		=> false,
+				'reflection'	=> $reflection
+			);
 		$ancestor = $reflection;
+		$traits = self::_getTraits($ancestor);
+		foreach($traits as $trait) {
+			$ancestors[] = array(
+					'isTrait'		=> true,
+					'reflection'	=> $trait
+				);
+		}
 		while($ancestor) {
 			$ancestor = $ancestor->getParentClass();
 			if($ancestor) {
-				$directAncestors[] = $ancestor;
+				$ancestors[] = array(
+						'isTrait'		=> false,
+						'reflection'	=> $ancestor
+					);
+				
+				$traits = self::_getTraits($ancestor);
+				foreach($traits as $trait) {
+					$ancestors[] = array(
+							'isTrait'		=> true,
+							'reflection'	=> $trait
+						);
+				}
 			}
 		}
 
-		return $directAncestors;
+		return $ancestors;
 	}
 
 
