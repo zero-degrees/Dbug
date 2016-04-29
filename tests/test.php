@@ -125,4 +125,6 @@ $test = array(
 \D::bug(new TestC(), false, -1);
 fclose($fileTest);
 TestC::publicStaticMethod();
-\D::bugString('control' . chr(8) . ' character');
+\D::bugString(array(1, 2, 3), false);
+\D::bugString('', false);
+\D::bugString('control' . chr(8) . ' character', false);

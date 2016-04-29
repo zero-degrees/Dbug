@@ -103,18 +103,21 @@ class D {
 
 		self::_header();
 
-		$var = (string)$var;
-		if($var) {
+		if(is_string($var)) {
 			$length = strlen($var);
-			for($i = 0; $i != $length; ++$i) {
-				$code = ord($var[$i]);
-				$isControlChar = $code < 32 || $code == 127;
-				$code = str_pad($code, 3, '0', STR_PAD_LEFT);
-				echo $isControlChar ? self::_style($code, 'controlChar') : $code, ' ';
+			echo '(', self::_style('string', 'type'), ' ', strlen($var), ")\n";
+			if($var) {
+				echo "\n";
+				for($i = 0; $i != $length; ++$i) {
+					$code = ord($var[$i]);
+					$isControlChar = $code < 32 || $code == 127;
+					$code = str_pad($code, 3, '0', STR_PAD_LEFT);
+					echo $isControlChar ? self::_style($code, 'controlChar') : $code, ' ';
+				}
 			}
 		}
 		else {
-			echo 'Empty string';
+			echo self::_style("Not a string.\n", 'warning');
 		}
 
 		self::_footer($exit);
@@ -551,6 +554,7 @@ class D {
 			'parameterName'	=> array("\033[0;32m", 'color: darkgreen; font-weight: bold;'),
 			'static'		=> array("\033[1;31m", 'color: firebrick; font-weight: bold;'),
 			'controlChar'	=> array("\033[1;31m", 'color: red;'),
+			'warning'		=> array("\033[1;31m", 'color: red;'),
 			'visibility'	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'function'		=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
 			'type'			=> array("\033[1;32m", 'color: green; font-weight: bold;'),
