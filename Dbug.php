@@ -132,8 +132,17 @@ class D {
 		}
 
 		self::_header();
-		$options = $showArgs ? DEBUG_BACKTRACE_IGNORE_ARGS : 0;
-		debug_print_backtrace($options);
+		
+		$reflection = new ReflectionFunction('debug_backtrace');
+		$parameterCount = sizeof($reflection->getParameters());
+		if($parameterCount != 0) {
+			$options = $showArgs ? DEBUG_BACKTRACE_IGNORE_ARGS : 0;
+			debug_print_backtrace($options);
+		}
+		else {
+			debug_print_backtrace();
+		}
+		
 		self::_footer($exit);
 	}
 
