@@ -65,7 +65,7 @@ class TestA extends \stdClass {
 	);
 	public static $publicStaticProp = true;
 
-	private function privateMethod() {
+	private function privateMethod($optionalParam = true) {
 		return true;
 	}
 
