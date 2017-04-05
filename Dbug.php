@@ -67,6 +67,25 @@ class D {
 		127	=> 'delete'
 	);
 
+	protected static $_styles = array(
+		'default'		=> array("\033[0;39m", ''),
+		'implement'		=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
+		'className'		=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
+		'methodName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
+		'constantName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
+		'propertyName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
+		'parameterName'	=> array("\033[0;32m", 'color: darkgreen; font-weight: bold;'),
+		'static'		=> array("\033[1;31m", 'color: firebrick; font-weight: bold;'),
+		'controlChar'	=> array("\033[1;31m", 'color: red;'),
+		'warning'		=> array("\033[1;31m", 'color: red;'),
+		'visibility'	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
+		'function'		=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
+		'type'			=> array("\033[1;32m", 'color: green; font-weight: bold;'),
+		'namespace'		=> array("\033[0;36m", 'color: darkcyan;'),
+		'caller'		=> array("\033[1;39m", 'font-weight: bold;'),
+		'trait'			=> array("\033[1;34m", 'color: blue; font-weight: bold;')
+	);
+
 	protected static $_registry = array();
 
 	/**
@@ -589,25 +608,7 @@ class D {
 	 * @return string
 	 */
 	protected static function _getStyle($name) {
-		$styles = array(
-			'default'		=> array("\033[0;39m", ''),
-			'implement'		=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
-			'className'		=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
-			'methodName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
-			'constantName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
-			'propertyName'	=> array("\033[1;36m", 'color: darkcyan; font-weight: bold;'),
-			'parameterName'	=> array("\033[0;32m", 'color: darkgreen; font-weight: bold;'),
-			'static'		=> array("\033[1;31m", 'color: firebrick; font-weight: bold;'),
-			'controlChar'	=> array("\033[1;31m", 'color: red;'),
-			'warning'		=> array("\033[1;31m", 'color: red;'),
-			'visibility'	=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
-			'function'		=> array("\033[1;35m", 'color: darkmagenta; font-weight: bold;'),
-			'type'			=> array("\033[1;32m", 'color: green; font-weight: bold;'),
-			'namespace'		=> array("\033[0;36m", 'color: darkcyan;'),
-			'caller'		=> array("\033[1;39m", 'font-weight: bold;'),
-			'trait'			=> array("\033[1;34m", 'color: blue; font-weight: bold;')
-		);
-		$style = isset($styles[$name]) ? $styles[$name] : $styles['default'];
+		$style = isset(self::$_styles[$name]) ? self::$_styles[$name] : self::$_styles['default'];
 
 		return self::_mode() == 'web' ? $style[1] : $style[0];
 	}
