@@ -31,6 +31,8 @@
 class D {
 	const STYLE = 'background-color: white; color: black; font-size: initial; font-weight: initial; font-style: initial; text-decoration: none; text-align: left; font-family: monospace; text-transform: none; padding: 14px; border: solid 1px #888;';
 
+	protected static $_registry = array();
+
 	/**
 	 * Display debugging info about any kind of variable.
 	 *
@@ -591,9 +593,7 @@ class D {
 	 * @return mixed
 	 */
 	protected static function _get($key) {
-		global $_Dbug;
-
-		return isset($_Dbug[$key]) ? $_Dbug[$key] : null;
+		return isset(self::$_registry[$key]) ? self::$_registry[$key] : null;
 	}
 
 	/**
@@ -603,11 +603,9 @@ class D {
 	 * @param mixed $value
 	 */
 	protected static function _set($key, $value) {
-		global $_Dbug;
-
-		if(!isset($_Dbug)) {
-			$_Dbug = array();
+		if(!isset(self::$_registry)) {
+			self::$_registry = array();
 		}
-		$_Dbug[$key] = $value;
+		self::$_registry[$key] = $value;
 	}
 }
