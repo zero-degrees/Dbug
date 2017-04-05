@@ -68,6 +68,10 @@ class TestA extends \stdClass {
 	private function privateMethod() {
 		return true;
 	}
+
+	public static function xmlTest() {
+		return simplexml_load_string('<div class="a"><div class="b">test</div></div>');
+	}
 }
 
 class TestB extends TestA {
@@ -128,3 +132,4 @@ TestC::publicStaticMethod();
 \D::bugString(array(1, 2, 3), false);
 \D::bugString('', false);
 \D::bugString('control' . chr(8) . ' character', false);
+\D::bug(TestA::xmlTest(), false, -1);

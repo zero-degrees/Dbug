@@ -288,7 +288,7 @@ class D {
 				$params = $method->getParameters();
 				foreach($params as $param) {
 					$variadic = method_exists($param, 'isVariadic') && $param->isVariadic();
-					if(!$variadic && $param->isOptional()) {
+					if(!$variadic && $param->isOptional() && $param->isDefaultValueAvailable()) {
 						$value = $param->getDefaultValue();
 						$type = gettype($value);
 
